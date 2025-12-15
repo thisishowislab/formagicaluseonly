@@ -3,30 +3,23 @@ import RealmPortal from './RealmPortal';
 import SanctumNav from './SanctumNav';
 import WaterfallEffect from './WaterfallEffect';
 
-const realms = [
+const portals = [
   {
-    id: 'manifestorium',
-    name: 'The Manifestorium',
-    description: 'Where desert survival meets infinite possibility',
-    available: true,
-    color: 'realm-manifestorium',
-  },
-  {
-    id: 'unknown-1',
+    id: 'realm-1',
     name: 'Realm Awaiting',
     description: 'A portal yet to be opened',
     available: false,
     color: 'realm-unknown1',
   },
   {
-    id: 'unknown-2',
+    id: 'realm-2',
     name: 'Realm Awaiting',
     description: 'Something stirs beyond',
     available: false,
     color: 'realm-unknown2',
   },
   {
-    id: 'unknown-3',
+    id: 'realm-3',
     name: 'Realm Awaiting',
     description: 'The threshold remains sealed',
     available: false,
@@ -54,31 +47,39 @@ const Sanctum = () => {
             className="text-center mb-16"
           >
             <p className="text-sm tracking-[0.3em] uppercase text-muted-foreground mb-4 font-body">
-              You have arrived at
+              Welcome to
             </p>
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-medium tracking-wider text-foreground mb-6 text-glow-primary">
-              The Sanctum
+              The Manifestorium
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground font-body italic max-w-xl mx-auto leading-relaxed">
               An old rusted bus with flat tires, portals inside that go anywhere, 
               and an endless waterfall that goes to infinity
             </p>
+            <p className="text-base text-muted-foreground/80 font-body mt-4 max-w-lg mx-auto">
+              We fix the necessary desert survival gear. We manifest and invent solutions 
+              to the things we can't fix. A quiet kind of magic.
+            </p>
           </motion.header>
 
-          {/* Realm portals grid */}
+          {/* Portals to other realms */}
           <motion.section
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.5 }}
-            className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto"
           >
-            {realms.map((realm, index) => (
-              <RealmPortal
-                key={realm.id}
-                realm={realm}
-                index={index}
-              />
-            ))}
+            <p className="text-center text-sm tracking-[0.2em] uppercase text-muted-foreground/60 font-body mb-8">
+              Portals to Other Realms
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+              {portals.map((portal, index) => (
+                <RealmPortal
+                  key={portal.id}
+                  realm={portal}
+                  index={index}
+                />
+              ))}
+            </div>
           </motion.section>
 
           {/* Artifacts teaser */}
