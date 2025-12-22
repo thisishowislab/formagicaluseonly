@@ -5,61 +5,74 @@ interface DustParticlesProps {
   count?: number;
 }
 
-const DustParticles = ({ count = 50 }: DustParticlesProps) => {
+const DustParticles = ({ count = 80 }: DustParticlesProps) => {
   const particles = useMemo(() => {
-    return Array.from({ length: count }, (_, i) => ({
-      id: i,
-      x: Math.random() * 100,
-      y: Math.random() * 100,
-      size: Math.random() * 4 + 1,
-      duration: Math.random() * 20 + 15,
-      delay: Math.random() * 8,
-      opacity: Math.random() * 0.6 + 0.2,
-      isGlowing: Math.random() > 0.6, // 40% of particles glow
-      glowColor: Math.random() > 0.5 ? 'accent' : 'primary',
-    }));
+    return Array.from({ length: count }, (_, i) => {
+      const isGlowing = Math.random() > 0.5;
+      const colorVariant = Math.random();
+      
+      // Multi-color particles
+      let color;
+      if (colorVariant < 0.25) {
+        color = 'hsl(45 80% 70%)'; // Gold
+      } else if (colorVariant < 0.45) {
+        color = 'hsl(280 70% 65%)'; // Magenta
+      } else if (colorVariant < 0.65) {
+        color = 'hsl(185 80% 60%)'; // Cyan
+      } else if (colorVariant < 0.8) {
+        color = 'hsl(340 70% 65%)'; // Rose
+      } else {
+        color = 'hsl(35 50% 75%)'; // Warm white
+      }
+
+      return {
+        id: i,
+        left: `${Math.random() * 100}%`,
+        top: `${Math.random() * 100}%`,
+        size: isGlowing ? Math.random() * 4 + 2 : Math.random() * 3 + 1,
+        duration: Math.random() * 15 + 10,
+        delay: Math.random() * 8,
+        opacity: isGlowing ? Math.random() * 0.8 + 0.4 : Math.random() * 0.4 + 0.1,
+        isGlowing,
+        color,
+        xDrift: (Math.random() - 0.5) * 200,
+        yDrift: (Math.random() - 0.5) * 150,
+      };
+    });
   }, [count]);
 
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+    <div className="absolute inset-0 overflow-hidden pointer-events-none z-10">
       {particles.map((particle) => (
         <motion.div
           key={particle.id}
           initial={{
-            x: `${particle.x}vw`,
-            y: `${particle.y + 20}vh`,
             opacity: 0,
             scale: 0,
+            x: 0,
+            y: 0,
           }}
           animate={{
-            x: [
-              `${particle.x}vw`, 
-              `${particle.x + (Math.random() - 0.5) * 15}vw`,
-              `${particle.x + (Math.random() - 0.5) * 10}vw`
-            ],
-            y: [
-              `${particle.y + 20}vh`, 
-              `${particle.y}vh`,
-              `${particle.y - 25}vh`
-            ],
-            opacity: [0, particle.opacity, particle.opacity * 0.8, 0],
-            scale: [0, 1, 1.2, 0.5],
+            opacity: [0, particle.opacity, particle.opacity * 0.5, particle.opacity, 0],
+            scale: [0, 1, 1.2, 0.8, 0],
+            x: [0, particle.xDrift * 0.3, particle.xDrift * 0.7, particle.xDrift],
+            y: [0, particle.yDrift * 0.3, particle.yDrift * 0.7, particle.yDrift],
           }}
           transition={{
             duration: particle.duration,
             delay: particle.delay,
             repeat: Infinity,
-            ease: "linear",
+            ease: "easeInOut",
           }}
           className="absolute rounded-full"
           style={{
+            left: particle.left,
+            top: particle.top,
             width: particle.size,
             height: particle.size,
-            background: particle.isGlowing 
-              ? `hsl(var(--${particle.glowColor}))` 
-              : 'hsl(var(--foreground)/0.5)',
+            backgroundColor: particle.color,
             boxShadow: particle.isGlowing 
-              ? `0 0 ${particle.size * 3}px hsl(var(--${particle.glowColor})), 0 0 ${particle.size * 6}px hsl(var(--${particle.glowColor})/0.5)` 
+              ? `0 0 ${particle.size * 4}px ${particle.color}, 0 0 ${particle.size * 8}px ${particle.color}`
               : 'none',
           }}
         />
