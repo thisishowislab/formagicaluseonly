@@ -3,11 +3,15 @@ import RealmPortal from './RealmPortal';
 import SanctumNav from './SanctumNav';
 import WaterfallEffect from './WaterfallEffect';
 
+interface SanctumProps {
+  onReplayIntro?: () => void;
+}
+
 const portals = [
   {
-    id: 'realm-1',
-    name: 'Realm Awaiting',
-    description: 'A portal yet to be opened',
+    id: 'the-grove',
+    name: 'The Living Grove',
+    description: 'A realm of water, growth, and circular ecosystems — coming soon',
     available: false,
     color: 'realm-unknown1',
   },
@@ -27,14 +31,14 @@ const portals = [
   },
 ];
 
-const Sanctum = () => {
+const Sanctum = ({ onReplayIntro }: SanctumProps) => {
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
       {/* Waterfall to infinity - subtle background effect */}
       <WaterfallEffect />
 
       {/* Navigation */}
-      <SanctumNav />
+      <SanctumNav onReplayIntro={onReplayIntro} />
 
       {/* Main content */}
       <main className="relative z-10 pt-24 pb-16 px-6">
