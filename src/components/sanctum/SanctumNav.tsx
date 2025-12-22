@@ -1,14 +1,19 @@
 import { motion } from 'framer-motion';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, RotateCcw } from 'lucide-react';
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
-const SanctumNav = () => {
+interface SanctumNavProps {
+  onReplayIntro?: () => void;
+}
+
+const SanctumNav = ({ onReplayIntro }: SanctumNavProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const navItems = [
-    { label: 'Artifacts', href: '#artifacts' },
-    { label: 'The Desert', href: '#origin' },
-    { label: 'About', href: '#about' },
+    { label: 'The Offering', href: '/offering', isRoute: true },
+    { label: 'CSC', href: '/csc', isRoute: true },
+    { label: 'About', href: '#about', isRoute: false },
   ];
 
   return (
@@ -21,24 +26,44 @@ const SanctumNav = () => {
       <div className="max-w-6xl mx-auto px-6">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <a 
-            href="/" 
+          <Link 
+            to="/" 
             className="font-display text-lg tracking-wider text-foreground hover:text-primary transition-colors duration-300"
           >
             Manifestorium
-          </a>
+          </Link>
 
           {/* Desktop nav */}
           <div className="hidden md:flex items-center gap-8">
             {navItems.map((item) => (
-              <a
-                key={item.label}
-                href={item.href}
-                className="text-sm tracking-[0.15em] uppercase text-muted-foreground hover:text-foreground transition-colors duration-300 font-body"
-              >
-                {item.label}
-              </a>
+              item.isRoute ? (
+                <Link
+                  key={item.label}
+                  to={item.href}
+                  className="text-sm tracking-[0.15em] uppercase text-muted-foreground hover:text-foreground transition-colors duration-300 font-body"
+                >
+                  {item.label}
+                </Link>
+              ) : (
+                <a
+                  key={item.label}
+                  href={item.href}
+                  className="text-sm tracking-[0.15em] uppercase text-muted-foreground hover:text-foreground transition-colors duration-300 font-body"
+                >
+                  {item.label}
+                </a>
+              )
             ))}
+            {onReplayIntro && (
+              <button
+                onClick={onReplayIntro}
+                className="flex items-center gap-2 text-sm tracking-[0.15em] uppercase text-muted-foreground hover:text-primary transition-colors duration-300 font-body group"
+                title="Replay Intro"
+              >
+                <RotateCcw className="w-4 h-4 group-hover:rotate-[-360deg] transition-transform duration-700" />
+                <span className="hidden lg:inline">Replay</span>
+              </button>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -62,15 +87,38 @@ const SanctumNav = () => {
         >
           <div className="px-6 py-4 space-y-4">
             {navItems.map((item) => (
-              <a
-                key={item.label}
-                href={item.href}
-                onClick={() => setIsOpen(false)}
-                className="block text-sm tracking-[0.15em] uppercase text-muted-foreground hover:text-foreground transition-colors duration-300 font-body"
-              >
-                {item.label}
-              </a>
+              item.isRoute ? (
+                <Link
+                  key={item.label}
+                  to={item.href}
+                  onClick={() => setIsOpen(false)}
+                  className="block text-sm tracking-[0.15em] uppercase text-muted-foreground hover:text-foreground transition-colors duration-300 font-body"
+                >
+                  {item.label}
+                </Link>
+              ) : (
+                <a
+                  key={item.label}
+                  href={item.href}
+                  onClick={() => setIsOpen(false)}
+                  className="block text-sm tracking-[0.15em] uppercase text-muted-foreground hover:text-foreground transition-colors duration-300 font-body"
+                >
+                  {item.label}
+                </a>
+              )
             ))}
+            {onReplayIntro && (
+              <button
+                onClick={() => {
+                  setIsOpen(false);
+                  onReplayIntro();
+                }}
+                className="flex items-center gap-2 text-sm tracking-[0.15em] uppercase text-primary hover:text-primary/80 transition-colors duration-300 font-body"
+              >
+                <RotateCcw className="w-4 h-4" />
+                Replay Intro
+              </button>
+            )}
           </div>
         </motion.div>
       )}
