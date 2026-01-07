@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import DustParticles from './DustParticles';
 
@@ -8,7 +8,37 @@ interface ThresholdProps {
 
 const Threshold = ({ onComplete }: ThresholdProps) => {
   const [phase, setPhase] = useState(0);
-  const [videoLoaded, setVideoLoaded] = useState(false);
+  const introLines = useMemo(
+    () => [
+      {
+        id: 1,
+        text: 'You have arrived at the threshold...',
+        className: 'text-xl md:text-3xl lg:text-4xl font-body italic tracking-widest',
+        color: 'hsl(35 50% 82%)',
+        shadow:
+          '0 0 32px hsl(45 80% 60% / 0.5), 0 0 64px hsl(280 70% 50% / 0.3)',
+        duration: 3200,
+      },
+      {
+        id: 2,
+        text: 'Where forgotten sparks gather and glow...',
+        className: 'text-lg md:text-2xl lg:text-3xl font-body italic tracking-wide',
+        color: 'hsl(185 70% 72%)',
+        shadow: '0 0 28px hsl(185 80% 55% / 0.6)',
+        duration: 3200,
+      },
+      {
+        id: 3,
+        text: 'A place for the curious, the bold, the becoming.',
+        className: 'text-lg md:text-2xl lg:text-3xl font-body italic tracking-wide',
+        color: 'hsl(300 60% 77%)',
+        shadow: '0 0 28px hsl(280 70% 60% / 0.6)',
+        duration: 3500,
+      },
+    ],
+    [],
+  );
+  const currentIntroLine = introLines.find((line) => line.id === phase);
 
   // Check if user has seen the intro before
   useEffect(() => {
@@ -20,16 +50,21 @@ const Threshold = ({ onComplete }: ThresholdProps) => {
 
   // Phase progression with cinematic timing
   useEffect(() => {
-    const timers = [
-      setTimeout(() => setPhase(1), 500),
-      setTimeout(() => setPhase(2), 3000),
-      setTimeout(() => setPhase(3), 6000),
-      setTimeout(() => setPhase(4), 9000),
-      setTimeout(() => setPhase(5), 20000), // Auto-complete fallback
-    ];
+    const timers: ReturnType<typeof setTimeout>[] = [];
+    let elapsed = 500;
+
+    introLines.forEach((line, index) => {
+      timers.push(
+        setTimeout(() => setPhase(line.id), elapsed),
+      );
+      elapsed += line.duration + (index === introLines.length - 1 ? 900 : 700);
+    });
+
+    timers.push(setTimeout(() => setPhase(4), elapsed));
+    timers.push(setTimeout(() => setPhase(5), elapsed + 8500));
 
     return () => timers.forEach(clearTimeout);
-  }, []);
+  }, [introLines]);
 
   useEffect(() => {
     if (phase === 5) {
@@ -56,114 +91,38 @@ const Threshold = ({ onComplete }: ThresholdProps) => {
       className="fixed inset-0 z-50 overflow-hidden"
       style={{ backgroundColor: 'hsl(25 20% 4%)' }}
     >
-      {/* CINEMATIC VIDEO BACKGROUND */}
-      <div className="absolute inset-0">
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          onLoadedData={() => setVideoLoaded(true)}
-          className="absolute inset-0 w-full h-full object-cover"
-          style={{ 
-            filter: 'brightness(0.4) contrast(1.2) saturate(1.3)',
-            opacity: videoLoaded ? 1 : 0,
-            transition: 'opacity 2s ease-in-out'
-          }}
-        >
-          <source 
-            src="https://assets.mixkit.co/videos/preview/mixkit-night-sky-with-stars-at-a-campfire-39763-large.mp4" 
-            type="video/mp4" 
-          />
-        </video>
-
-        {/* Fallback gradient if video doesn't load */}
-        <div 
-          className="absolute inset-0"
-          style={{
-            opacity: videoLoaded ? 0 : 1,
-            transition: 'opacity 2s ease-in-out',
-            background: 'radial-gradient(ellipse at 50% 100%, hsl(15 40% 15%) 0%, hsl(25 20% 4%) 70%)'
-          }}
-        />
-      </div>
-
-      {/* MULTI-COLOR ANIMATED OVERLAYS */}
-      
-      {/* Magenta/Purple glow - bottom left */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ 
-          opacity: [0.3, 0.6, 0.4, 0.7, 0.3],
-          scale: [1, 1.2, 1.1, 1.3, 1]
-        }}
-        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute -bottom-32 -left-32 w-[600px] h-[600px] md:w-[900px] md:h-[900px]"
+      {/* CINEMATIC BACKGROUND */}
+      <div
+        className="absolute inset-0"
         style={{
-          background: 'radial-gradient(circle, hsl(300 80% 50% / 0.5) 0%, hsl(280 70% 40% / 0.3) 40%, transparent 70%)',
-          filter: 'blur(80px)',
+          background:
+            'linear-gradient(120deg, hsl(270 30% 10%) 0%, hsl(235 25% 12%) 45%, hsl(200 25% 12%) 65%, hsl(28 25% 12%) 100%)',
         }}
       />
 
-      {/* Cyan/Teal glow - top right */}
+      {/* Subtle color veil */}
       <motion.div
         initial={{ opacity: 0 }}
-        animate={{ 
-          opacity: [0.2, 0.5, 0.3, 0.6, 0.2],
-          scale: [1, 1.15, 1.05, 1.2, 1],
-          x: ['0%', '5%', '-3%', '5%', '0%']
-        }}
-        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-        className="absolute -top-32 -right-32 w-[500px] h-[500px] md:w-[800px] md:h-[800px]"
+        animate={{ opacity: [0.3, 0.45, 0.35, 0.5, 0.3] }}
+        transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
+        className="absolute inset-0"
         style={{
-          background: 'radial-gradient(circle, hsl(185 90% 55% / 0.5) 0%, hsl(200 80% 45% / 0.3) 40%, transparent 70%)',
-          filter: 'blur(70px)',
+          background:
+            'radial-gradient(120% 120% at 15% 70%, hsl(280 35% 25% / 0.5) 0%, transparent 55%), radial-gradient(120% 120% at 85% 20%, hsl(190 35% 25% / 0.5) 0%, transparent 50%)',
+          filter: 'blur(30px)',
         }}
       />
 
-      {/* Golden/Amber glow - center */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.5 }}
-        animate={{ 
-          opacity: [0.1, 0.4, 0.2, 0.5, 0.1],
-          scale: [0.8, 1.3, 1, 1.4, 0.8]
-        }}
-        transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] md:w-[700px] md:h-[700px]"
-        style={{
-          background: 'radial-gradient(circle, hsl(45 90% 55% / 0.4) 0%, hsl(35 80% 45% / 0.2) 40%, transparent 65%)',
-          filter: 'blur(60px)',
-        }}
-      />
-
-      {/* Electric blue accent - floating */}
+      {/* Horizon haze */}
       <motion.div
         initial={{ opacity: 0 }}
-        animate={{ 
-          opacity: [0.15, 0.35, 0.2, 0.4, 0.15],
-          y: ['-5%', '5%', '-3%', '8%', '-5%'],
-          x: ['-10%', '10%', '-5%', '15%', '-10%']
-        }}
-        transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-1/3 right-1/4 w-[300px] h-[300px] md:w-[500px] md:h-[500px]"
+        animate={{ opacity: [0.1, 0.25, 0.15, 0.3, 0.1] }}
+        transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}
+        className="absolute bottom-[22%] left-0 right-0 h-[220px]"
         style={{
-          background: 'radial-gradient(circle, hsl(220 90% 60% / 0.4) 0%, transparent 60%)',
-          filter: 'blur(50px)',
-        }}
-      />
-
-      {/* Rose/Pink accent */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ 
-          opacity: [0.1, 0.3, 0.15, 0.35, 0.1],
-          scale: [1, 1.2, 0.9, 1.3, 1]
-        }}
-        transition={{ duration: 9, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-        className="absolute bottom-1/4 right-1/3 w-[350px] h-[350px] md:w-[550px] md:h-[550px]"
-        style={{
-          background: 'radial-gradient(circle, hsl(340 80% 55% / 0.35) 0%, transparent 60%)',
-          filter: 'blur(55px)',
+          background:
+            'radial-gradient(ellipse 120% 100% at 50% 100%, hsl(300 30% 35% / 0.35) 0%, hsl(40 30% 30% / 0.2) 35%, transparent 70%)',
+          filter: 'blur(35px)',
         }}
       />
 
@@ -197,103 +156,45 @@ const Threshold = ({ onComplete }: ThresholdProps) => {
       />
 
       {/* Enhanced dust particles */}
-      <DustParticles count={80} />
+      <DustParticles count={140} variant="intro" />
 
       {/* ANIMATED HORIZON GLOW */}
       <motion.div
         initial={{ opacity: 0, scaleX: 0 }}
         animate={{ opacity: 1, scaleX: 1 }}
         transition={{ duration: 4, delay: 1, ease: [0.22, 1, 0.36, 1] }}
-        className="absolute bottom-[20%] left-0 right-0 h-[3px]"
+        className="absolute bottom-[18%] left-0 right-0 h-[2px]"
         style={{
-          background: 'linear-gradient(90deg, transparent 0%, hsl(185 90% 55% / 0.3) 15%, hsl(280 70% 60% / 0.8) 35%, hsl(45 90% 60% / 1) 50%, hsl(280 70% 60% / 0.8) 65%, hsl(185 90% 55% / 0.3) 85%, transparent 100%)',
-          boxShadow: '0 0 30px hsl(280 70% 60% / 0.6), 0 0 60px hsl(45 90% 60% / 0.4), 0 0 100px hsl(185 90% 55% / 0.3)',
-        }}
-      />
-
-      {/* Secondary horizon glow */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: [0.3, 0.6, 0.4, 0.7, 0.3] }}
-        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-        className="absolute bottom-[20%] left-[10%] right-[10%] h-[80px]"
-        style={{
-          background: 'radial-gradient(ellipse 100% 100% at 50% 0%, hsl(280 70% 50% / 0.4) 0%, hsl(45 80% 50% / 0.2) 40%, transparent 100%)',
-          filter: 'blur(30px)',
+          background:
+            'linear-gradient(90deg, transparent 0%, hsl(200 50% 60% / 0.3) 20%, hsl(300 45% 60% / 0.6) 45%, hsl(40 45% 65% / 0.8) 50%, hsl(300 45% 60% / 0.6) 55%, hsl(200 50% 60% / 0.3) 80%, transparent 100%)',
+          boxShadow:
+            '0 0 25px hsl(300 45% 60% / 0.4), 0 0 50px hsl(40 45% 65% / 0.35)',
         }}
       />
 
       {/* CINEMATIC CONTENT */}
       <div className="relative z-10 h-full flex flex-col items-center justify-center px-6">
         <AnimatePresence mode="wait">
-          {phase >= 1 && phase < 2 && (
+          {currentIntroLine && (
             <motion.div
-              key="phase1"
+              key={`phase-${currentIntroLine.id}`}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              exit={{ opacity: 0, scale: 1.1 }}
-              transition={{ duration: 1.5 }}
+              exit={{ opacity: 0, y: -30 }}
+              transition={{ duration: 1.2 }}
               className="text-center"
             >
               <motion.p
-                initial={{ opacity: 0, y: 60, filter: 'blur(20px)' }}
+                initial={{ opacity: 0, y: 50, filter: 'blur(18px)' }}
                 animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                transition={{ duration: 2, ease: [0.22, 1, 0.36, 1] }}
-                className="text-xl md:text-3xl lg:text-4xl font-body italic tracking-widest"
+                transition={{ duration: 1.8, ease: [0.22, 1, 0.36, 1] }}
+                className={currentIntroLine.className}
                 style={{
-                  color: 'hsl(35 40% 80%)',
-                  textShadow: '0 0 30px hsl(45 80% 60% / 0.5), 0 0 60px hsl(280 70% 50% / 0.3)',
+                  color: currentIntroLine.color,
+                  textShadow: currentIntroLine.shadow,
                 }}
               >
-                Somewhere in the desert...
-              </motion.p>
-            </motion.div>
-          )}
-
-          {phase >= 2 && phase < 3 && (
-            <motion.div
-              key="phase2"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0, y: -40 }}
-              transition={{ duration: 1 }}
-              className="text-center"
-            >
-              <motion.p
-                initial={{ opacity: 0, y: 40, filter: 'blur(15px)' }}
-                animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
-                className="text-lg md:text-2xl lg:text-3xl font-body italic tracking-wide"
-                style={{
-                  color: 'hsl(185 70% 70%)',
-                  textShadow: '0 0 25px hsl(185 80% 50% / 0.6)',
-                }}
-              >
-                ...beyond the edge of everything known...
-              </motion.p>
-            </motion.div>
-          )}
-
-          {phase >= 3 && phase < 4 && (
-            <motion.div
-              key="phase3"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 1 }}
-              className="text-center"
-            >
-              <motion.p
-                initial={{ opacity: 0, scale: 0.9, filter: 'blur(15px)' }}
-                animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
-                transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
-                className="text-lg md:text-2xl lg:text-3xl font-body italic tracking-wide"
-                style={{
-                  color: 'hsl(300 60% 75%)',
-                  textShadow: '0 0 25px hsl(280 70% 60% / 0.6)',
-                }}
-              >
-                ...a quiet kind of magic awaits.
+                {currentIntroLine.text}
               </motion.p>
             </motion.div>
           )}
@@ -357,7 +258,7 @@ const Threshold = ({ onComplete }: ThresholdProps) => {
                   textShadow: '0 0 20px hsl(45 80% 60% / 0.3)',
                 }}
               >
-                Where forgotten things find their voice
+                A cinematic welcome for the seekers and the bold
               </motion.p>
 
               {/* ENTER button - Epic with multi-color border */}
