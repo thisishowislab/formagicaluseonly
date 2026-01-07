@@ -3,43 +3,53 @@ import { motion } from 'framer-motion';
 
 interface DustParticlesProps {
   count?: number;
+  variant?: 'intro' | 'default';
 }
 
-const DustParticles = ({ count = 80 }: DustParticlesProps) => {
+const DustParticles = ({ count = 80, variant = 'default' }: DustParticlesProps) => {
   const particles = useMemo(() => {
     return Array.from({ length: count }, (_, i) => {
-      const isGlowing = Math.random() > 0.5;
+      const isIntro = variant === 'intro';
+      const isGlowing = isIntro ? Math.random() > 0.9 : Math.random() > 0.5;
       const colorVariant = Math.random();
       
       // Multi-color particles
       let color;
       if (colorVariant < 0.25) {
-        color = 'hsl(45 80% 70%)'; // Gold
+        color = isIntro ? 'hsl(45 40% 70%)' : 'hsl(45 80% 70%)'; // Gold
       } else if (colorVariant < 0.45) {
-        color = 'hsl(280 70% 65%)'; // Magenta
+        color = isIntro ? 'hsl(280 35% 70%)' : 'hsl(280 70% 65%)'; // Magenta
       } else if (colorVariant < 0.65) {
-        color = 'hsl(185 80% 60%)'; // Cyan
+        color = isIntro ? 'hsl(195 35% 70%)' : 'hsl(185 80% 60%)'; // Cyan
       } else if (colorVariant < 0.8) {
-        color = 'hsl(340 70% 65%)'; // Rose
+        color = isIntro ? 'hsl(320 35% 70%)' : 'hsl(340 70% 65%)'; // Rose
       } else {
-        color = 'hsl(35 50% 75%)'; // Warm white
+        color = isIntro ? 'hsl(30 30% 80%)' : 'hsl(35 50% 75%)'; // Warm white
       }
 
       return {
         id: i,
         left: `${Math.random() * 100}%`,
         top: `${Math.random() * 100}%`,
-        size: isGlowing ? Math.random() * 4 + 2 : Math.random() * 3 + 1,
-        duration: Math.random() * 15 + 10,
+        size: isIntro
+          ? Math.random() * 1.5 + 0.5
+          : isGlowing
+            ? Math.random() * 4 + 2
+            : Math.random() * 3 + 1,
+        duration: isIntro ? Math.random() * 30 + 20 : Math.random() * 15 + 10,
         delay: Math.random() * 8,
-        opacity: isGlowing ? Math.random() * 0.8 + 0.4 : Math.random() * 0.4 + 0.1,
+        opacity: isIntro
+          ? Math.random() * 0.4 + 0.1
+          : isGlowing
+            ? Math.random() * 0.8 + 0.4
+            : Math.random() * 0.4 + 0.1,
         isGlowing,
         color,
-        xDrift: (Math.random() - 0.5) * 200,
-        yDrift: (Math.random() - 0.5) * 150,
+        xDrift: (Math.random() - 0.5) * (isIntro ? 60 : 200),
+        yDrift: (Math.random() - 0.5) * (isIntro ? 40 : 150),
       };
     });
-  }, [count]);
+  }, [count, variant]);
 
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none z-10">
