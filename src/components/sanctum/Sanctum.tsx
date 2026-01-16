@@ -11,8 +11,9 @@ const portals = [
   {
     id: 'the-grove',
     name: 'The Living Grove',
-    description: 'A realm of water, growth, and circular ecosystems — coming soon',
-    available: false,
+    description: 'A realm of water, growth, and circular ecosystems',
+    available: true,
+    href: '/the-living-grove',
     color: 'realm-unknown1',
   },
   {
