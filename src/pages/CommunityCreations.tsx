@@ -32,7 +32,7 @@ const CommunityCreations = () => {
       {/* Back navigation */}
       <Link to="/" className="fixed top-6 left-6 z-20 flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors duration-300">
         <ArrowLeft className="w-5 h-5" />
-        <span className="font-body tracking-wide">Return to Sanctum</span>
+        <span className="font-body tracking-wide">Return to The Manifestorium </span>
       </Link>
 
       <main className="relative z-10 pt-24 pb-16 px-6">
