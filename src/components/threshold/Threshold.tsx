@@ -1,6 +1,7 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import DustParticles from './DustParticles';
+import { useAmbientAudio } from '@/hooks/useAmbientAudio';
 
 interface ThresholdProps {
   onComplete: () => void;
@@ -8,6 +9,8 @@ interface ThresholdProps {
 
 const Threshold = ({ onComplete }: ThresholdProps) => {
   const [phase, setPhase] = useState(0);
+  const [audioStarted, setAudioStarted] = useState(false);
+  const ambientAudio = useAmbientAudio({ fadeInDuration: 4000, fadeOutDuration: 2000, volume: 0.12 });
   const introLines = useMemo(
     () => [
       {
@@ -48,6 +51,33 @@ const Threshold = ({ onComplete }: ThresholdProps) => {
     }
   }, [onComplete]);
 
+  // Start ambient audio on first user interaction (required for autoplay policy)
+  useEffect(() => {
+    const startAudioOnInteraction = () => {
+      if (!audioStarted) {
+        ambientAudio.start();
+        setAudioStarted(true);
+      }
+    };
+
+    // Try to start immediately (works if user already interacted with page)
+    const timer = setTimeout(() => {
+      startAudioOnInteraction();
+    }, 500);
+
+    // Also listen for user interaction as fallback
+    window.addEventListener('click', startAudioOnInteraction, { once: true });
+    window.addEventListener('keydown', startAudioOnInteraction, { once: true });
+    window.addEventListener('touchstart', startAudioOnInteraction, { once: true });
+
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('click', startAudioOnInteraction);
+      window.removeEventListener('keydown', startAudioOnInteraction);
+      window.removeEventListener('touchstart', startAudioOnInteraction);
+    };
+  }, [ambientAudio, audioStarted]);
+
   // Phase progression with cinematic timing
   useEffect(() => {
     const timers: ReturnType<typeof setTimeout>[] = [];
@@ -73,11 +103,13 @@ const Threshold = ({ onComplete }: ThresholdProps) => {
   }, [phase]);
 
   const handleEnter = () => {
+    ambientAudio.stop();
     sessionStorage.setItem('hasSeenThreshold', 'true');
     onComplete();
   };
 
   const handleSkip = () => {
+    ambientAudio.stop();
     sessionStorage.setItem('hasSeenThreshold', 'true');
     onComplete();
   };
