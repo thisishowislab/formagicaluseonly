@@ -84,9 +84,7 @@ The Manifestorium</p>
           duration: 0.8,
           delay: 0.8
         }} className="mt-24 text-center">
-            <p className="text-sm tracking-[0.2em] uppercase text-muted-foreground/60 font-body">
-              Relics and artifacts await within each realm
-            </p>
+            <p className="text-sm tracking-[0.2em] uppercase text-muted-foreground/60 font-body">Everything is an experiment. You're invited to participate, not spectate. With improvisation as law and tech as a paintbrush, your weirdest ideas are suddenly fair game.</p>
           </motion.section>
         </div>
       </main>
