@@ -2,39 +2,33 @@ import { motion } from 'framer-motion';
 import RealmPortal from './RealmPortal';
 import SanctumNav from './SanctumNav';
 import WaterfallEffect from './WaterfallEffect';
-
 interface SanctumProps {
   onReplayIntro?: () => void;
 }
-
-const portals = [
-  {
-    id: 'the-grove',
-    name: 'The Living Grove',
-    description: 'A realm of water, growth, and circular ecosystems',
-    available: true,
-    href: '/the-living-grove',
-    color: 'realm-unknown1',
-  },
-  {
-    id: 'realm-2',
-    name: 'Realm Awaiting',
-    description: 'Something stirs beyond',
-    available: false,
-    color: 'realm-unknown2',
-  },
-  {
-    id: 'realm-3',
-    name: 'Realm Awaiting',
-    description: 'The threshold remains sealed',
-    available: false,
-    color: 'realm-unknown3',
-  },
-];
-
-const Sanctum = ({ onReplayIntro }: SanctumProps) => {
-  return (
-    <div className="min-h-screen bg-background relative overflow-hidden">
+const portals = [{
+  id: 'the-grove',
+  name: 'The Living Grove',
+  description: 'A realm of water, growth, and circular ecosystems',
+  available: true,
+  href: '/the-living-grove',
+  color: 'realm-unknown1'
+}, {
+  id: 'realm-2',
+  name: 'Realm Awaiting',
+  description: 'Something stirs beyond',
+  available: false,
+  color: 'realm-unknown2'
+}, {
+  id: 'realm-3',
+  name: 'Realm Awaiting',
+  description: 'The threshold remains sealed',
+  available: false,
+  color: 'realm-unknown3'
+}];
+const Sanctum = ({
+  onReplayIntro
+}: SanctumProps) => {
+  return <div className="min-h-screen bg-background relative overflow-hidden">
       {/* Waterfall to infinity - subtle background effect */}
       <WaterfallEffect />
 
@@ -45,55 +39,51 @@ const Sanctum = ({ onReplayIntro }: SanctumProps) => {
       <main className="relative z-10 pt-24 pb-16 px-6">
         <div className="max-w-6xl mx-auto">
           {/* Header */}
-          <motion.header
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-center mb-16"
-          >
-            <p className="text-sm tracking-[0.3em] uppercase text-muted-foreground mb-4 font-body">
-              Welcome to
-            </p>
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-medium tracking-wider text-foreground mb-6 text-glow-primary">
-              The Manifestorium
-            </h1>
-            <p className="text-lg md:text-xl text-muted-foreground font-body italic max-w-xl mx-auto leading-relaxed">
-              An old rusted bus with flat tires, portals inside that go anywhere, 
-              and an endless waterfall that goes to infinity
-            </p>
-            <p className="text-base text-muted-foreground/80 font-body mt-4 max-w-lg mx-auto">
-              We fix the necessary desert survival gear. We manifest and invent solutions 
-              to the things we can't fix. A quiet kind of magic.
-            </p>
+          <motion.header initial={{
+          opacity: 0,
+          y: 20
+        }} animate={{
+          opacity: 1,
+          y: 0
+        }} transition={{
+          duration: 0.8,
+          delay: 0.2
+        }} className="text-center mb-16 text-sidebar-ring">
+            <p className="text-sm tracking-[0.3em] uppercase text-muted-foreground mb-4 font-body text-glow-primary">WELCOME TO
+The Manifestorium</p>
+            
+            <p className="md:text-xl text-muted-foreground italic max-w-xl mx-auto leading-relaxed text-base font-mono font-semibold text-center">Where off-grid tech, desert salvage, and handmade myth collide to prove that creation doesn't belong to the rich, the plugged-in, or the polished.</p>
+            <p className="text-base text-muted-foreground/80 font-body mt-4 max-w-lg mx-auto bg-[#0f0a06]">“For Magical Use Only” means these objects are not optimized, mass-produced, or pretending to be perfect. They are experiments. They are companions. They are proof that meaning can be fabricated from almost nothing.</p>
           </motion.header>
 
           {/* Portals to other realms */}
-          <motion.section
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.5 }}
-          >
+          <motion.section initial={{
+          opacity: 0
+        }} animate={{
+          opacity: 1
+        }} transition={{
+          duration: 0.8,
+          delay: 0.5
+        }}>
             <p className="text-center text-sm tracking-[0.2em] uppercase text-muted-foreground/60 font-body mb-8">
               Portals to Other Realms
             </p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-              {portals.map((portal, index) => (
-                <RealmPortal
-                  key={portal.id}
-                  realm={portal}
-                  index={index}
-                />
-              ))}
+              {portals.map((portal, index) => <RealmPortal key={portal.id} realm={portal} index={index} />)}
             </div>
           </motion.section>
 
           {/* Artifacts teaser */}
-          <motion.section
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.8 }}
-            className="mt-24 text-center"
-          >
+          <motion.section initial={{
+          opacity: 0,
+          y: 20
+        }} animate={{
+          opacity: 1,
+          y: 0
+        }} transition={{
+          duration: 0.8,
+          delay: 0.8
+        }} className="mt-24 text-center">
             <p className="text-sm tracking-[0.2em] uppercase text-muted-foreground/60 font-body">
               Relics and artifacts await within each realm
             </p>
@@ -110,8 +100,6 @@ const Sanctum = ({ onReplayIntro }: SanctumProps) => {
           </p>
         </div>
       </footer>
-    </div>
-  );
+    </div>;
 };
-
 export default Sanctum;
